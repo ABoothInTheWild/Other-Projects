@@ -2,7 +2,7 @@
 """
 Created on Wed Dec 20 14:04:41 2017
 
-@author: t2adb
+@author: Alexander Booth
 """
 
 import time
@@ -14,8 +14,6 @@ import json
 
 from nltk.tokenize.moses import MosesDetokenizer
 detokenizer = MosesDetokenizer()
-
-os.chdir("G:\Python Scripts")
 
 def tokenizeProperly(myString):
     return nltk.word_tokenize(detokenizer.detokenize(myString, return_str=True))
