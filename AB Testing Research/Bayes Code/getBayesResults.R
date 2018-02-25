@@ -1,21 +1,20 @@
 #Alexander Booth
-#Found Visualize
 
 #This function calculates proabilities and expected change in success rates between two groups
 
-#Full Data needs to have a Search_Result_Name, Group, and Success columns in scope
+#Full Data needs to have a Name, Group, and Success columns in scope
 #Groups to Compare should be a vector of 2 groups, e.g. c(1,2), c(2,3), or c(1,3)
 #NoWorseThanAPercent is only used in calculating the probability that B is superior or Worse than A
 getBayesResults <- function(full_data, groupsToCompare, prior_alpha = 1, prior_beta = 1, 
-                            noWorseThanAPercent = 1, splitBySearchResult = T){
+                            noWorseThanAPercent = 1, splitByName = T){
   
-  #Get all Search Result Names
+  #Get all Names
   #Could instead use Ids here, as long as everything is unique
-  #names <- matrix(unique(full_data$Search_Result_Name))
-  names <- matrix(unique(full_data$Search_Result_IDs))
+  #names <- matrix(unique(full_data$Name))
+  names <- matrix(unique(full_data$IDs))
   iter <- length(names)
   
-  if(!splitBySearchResult){
+  if(!splitByName){
     iter <- 1
   }
   
@@ -35,15 +34,15 @@ getBayesResults <- function(full_data, groupsToCompare, prior_alpha = 1, prior_b
   for(n in 1:iter)
   {
     #get data
-    se_rslt_name <- names[n]
-    sub_data <- full_data[full_data$Search_Result_IDs == se_rslt_name,]
+    name <- names[n]
+    sub_data <- full_data[full_data$IDs == name,]
     
-    if(!splitBySearchResult){
+    if(!splitByName){
       sub_data <- full_data
     }
     
-    #get total searches
-    search_count <- nrow(sub_data)
+    #get total count
+    count <- nrow(sub_data)
     
     #Split by test group
     a.group.number <- groupsToCompare[1]
@@ -80,9 +79,9 @@ getBayesResults <- function(full_data, groupsToCompare, prior_alpha = 1, prior_b
     diff.b.a <- b.est-a.est
     diff.quants <- c(b.quants[1]-a.quants[2], b.quants[2]-a.quants[1])
     
-    #Get Customer Impact
-    custImp <- search_count * diff.b.a
-    custImp.quants <- c(search_count * diff.quants[1], search_count * diff.quants[2])
+    #Get Impact
+    impact <- count * diff.b.a
+    impact.quants <- c(count * diff.quants[1], ount * diff.quants[2])
     
     #Get Ratio
     ratio <- b.samples/a.samples
@@ -100,18 +99,18 @@ getBayesResults <- function(full_data, groupsToCompare, prior_alpha = 1, prior_b
     
     
     #Accumulate results
-    results[n,] <- c(se_rslt_name, a.group.success, a.group.failure, b.group.success, b.group.failure, search_count, 
+    results[n,] <- c(name, a.group.success, a.group.failure, b.group.success, b.group.failure, search_count, 
                      a.est, a.quants[1], a.quants[2], b.est, b.quants[1], b.quants[2], diff.b.a, diff.quants[1], diff.quants[2],  
-                     p.b_superior, p.b_worse, custImp, custImp.quants[1], custImp.quants[2], delta.est, delta.quants[1], delta.quants[2],
+                     p.b_superior, p.b_worse, impact, impact.quants[1], impact.quants[2], delta.est, delta.quants[1], delta.quants[2],
                      greater.est, less.est, delta.prob * 100, greater.prob * 100, less.prob * 100)
   }
   
   #Create Return DF
   results_df <- as.data.frame(results, stringsAsFactors = FALSE)
-  colnames(results_df) <- c("Search Result Name", "Group 1 Successes", "Group 1 Failures", 
-                            "Group 2 Successes", "Group 2 Failures", "Search Count", "A Success Probability", ".025 A Success",
+  colnames(results_df) <- c("Name", "Group 1 Successes", "Group 1 Failures", 
+                            "Group 2 Successes", "Group 2 Failures", "Count", "A Success Probability", ".025 A Success",
                             ".975 A Success", "B Success Probability", ".025 B Success", ".975 B Success", "Change in Success B-A", ".025 Change in Success", ".975 Change in Success", "Probability Group 2 is Superior", "Probability Group 2 is Worse",
-                            "Change in Customer Success", ".025 Change in Customer Success", ".975 Change in Customer Success", "Expected New Success Rate If B is Deployed", ".025 Expected Success", ".975 Expected Success",
+                            "Change in Impact", ".025 Change in Impact", ".975 Change in Impact", "Expected New Success Rate If B is Deployed", ".025 Expected Success", ".975 Expected Success",
                             "Expected Rate if B is Better", "Expected Rate if B is Worse", "Expected Percent Change in New Success Rate If B is Deployed", "Percent Change if B is Better", "Percent Change if B is Worse")
   
   return(results_df)
