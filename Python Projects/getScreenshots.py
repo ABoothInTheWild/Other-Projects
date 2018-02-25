@@ -2,7 +2,9 @@
 """
 Created on Tue Dec 12 17:23:13 2017
 
-@author: t2adb
+@author: Alexander Booth
+
+A worse way to get screenshots of a webpage
 """
 
 #Import Selenium
@@ -12,14 +14,9 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import TimeoutException
 
-#Other Imports
-import os
-
-#Set Dir
-os.chdir("G:\Pics")
 #Find PhantomJS (This will be our phantom browser)
 #Download from the internet otherwise
-PHANTOMJS_PATH = 'C:/phantomjs-2.1.1-windows/bin/phantomjs.exe'
+PHANTOMJS_PATH = 'phantomjs.exe'
 
 ##############################################################################
 
@@ -58,7 +55,7 @@ def getScreenShot_ByURLAndWindowSize(url, windowWidth, windowHeight, reverse = F
 ##############################################################################
 
 #Get Search Result Names
-text_file = open("K:/t2adb/intermediatePageSearchTerms.txt", "r")
+text_file = open("SearchTerms.txt", "r")
 searchRsltNames = text_file.read().splitlines()
 
 #searchRsltNames = ["slotted screws"]
@@ -68,7 +65,7 @@ windowWidth = 1920
 windowHeight = 1080
 
 #Base URL, avoid ab test
-url = 'https://www.mcmaster.com/?abtests=CLPvsBroad~~1#'
+url = 'https://www.mcmaster.com/#'
 
 #Loop through search names and grab screenshots
 for name in searchRsltNames:
