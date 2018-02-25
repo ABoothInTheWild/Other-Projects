@@ -2,8 +2,7 @@
 """
 Spyder Editor
 
-Author: Alexander Booth, t2adb
-Team: Found Visualize
+Author: Alexander Booth
 Date: January 25, 2018
 
 Intro to Sentiment Analysis in Python
@@ -44,7 +43,7 @@ TextBlob("not a very nice description").sentiment #-0.23
 
 ############################################################
 # Chapter 1: Bee Movie
-f = open('K:/t2adb/Sentiment Analysis/Data/beeMovieScript.txt','r')
+f = open('beeMovieScript.txt','r')
 beeMovie = f.readlines()
 beeMovie = [s.strip() for s in beeMovie]
 
