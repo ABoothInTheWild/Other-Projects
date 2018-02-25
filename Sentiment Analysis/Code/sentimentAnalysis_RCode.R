@@ -1,6 +1,5 @@
 
-# Author: Alexander Booth, t2adb
-# Team: Found Visualize
+# Author: Alexander Booth
 # Date: January 25, 2018
 
 # Intro to Sentiment Analysis in R
@@ -28,7 +27,7 @@ library(RColorBrewer)
 library(gridExtra)
 library(hash)
 library(reshape2)
-source("K:/t2adb/Sentiment Analysis/Code/fte_theme.R")
+source("fte_theme.R")
 
 # Libraries for Text Analysis
 library(tidytext)
@@ -416,7 +415,7 @@ not_words %>%
 library(SentimentAnalysis)
 library(qdapDictionaries)
 
-beeMovie <- readLines("K:/t2adb/Sentiment Analysis/Data/beeMovieScript.txt")
+beeMovie <- readLines("beeMovieScript.txt")
 
 #Get chunks of 20 lines and their sentiments
 #This takes a while to Run
