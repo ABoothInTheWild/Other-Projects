@@ -2,7 +2,7 @@
 """
 Created on Mon Oct 30 15:45:18 2017
 
-@author: t2adb
+@author: Alexander Booth
 """
 from numpy import *
 from pylab import *
