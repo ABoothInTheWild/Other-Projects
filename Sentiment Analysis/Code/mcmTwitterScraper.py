@@ -2,8 +2,7 @@
 """
 Spyder Editor
 
-Author: Alexander Booth, t2adb
-Team: Found Visualize
+Author: Alexander Booth
 Date: 11/29/2017
 
 This script scrapes tweets from the Twitter API and writes them to a csv
@@ -13,7 +12,7 @@ run daily or at least weekly
 Future Work: Add a stream listener instead of making it a task
 
 Run from the python or cmd command line to suppress warnings:
-python -W ignore "K:\t2adb\Sentiment Analysis\Code\mcmTwitterScraper.py"
+python -W ignore "mcmTwitterScraper.py"
 """
 
 #Imports
@@ -21,9 +20,6 @@ import tweepy
 import pandas as pd
 import numpy as np
 import os
-
-#Set directory
-os.chdir("K:\t2adb\Sentiment Analysis\Code")
 
 #Load twitter credentials
 from twitCredentials import *
