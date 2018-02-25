@@ -2,7 +2,9 @@
 """
 Created on Thu Dec 14 10:30:27 2017
 
-@author: t2adb
+@author: Alexander Booth
+
+Get Screenshots of landing pages from a website
 """
 
 #Import Selenium
@@ -19,7 +21,6 @@ class ScreenShotter(object):
     
     #Function to get Screenshot by window size
     def getScreenShot_ByWindowSizeAndURL(self, windowW, windowH, url = ""):
-        print("hello")
         #Get URL to screenshot. If none given, use base
         if url == "":
             url = self.baseURL
@@ -51,11 +52,11 @@ class ScreenShotter(object):
 from selenium import webdriver
 
 #Find PhantomJS (This will be our phantom browswer)
-PHANTOMJS_PATH = 'C:/phantomjs-2.1.1-windows/bin/phantomjs.exe'
+PHANTOMJS_PATH = 'phantomjs.exe'
 
 #Init ScreenShotter Class
 #Driver, BaseURL, Destination to save Images
-screenShotter = ScreenShotter("https://www.mcmaster.com/", "G:/Pics/")
+screenShotter = ScreenShotter("https://www.mcmaster.com/", "../Pics/")
 
 #Get Search Result Names
 searchRsltNames = ["standard threaded rods"]
