@@ -3,6 +3,8 @@
 Created on Wed Dec 20 14:04:41 2017
 
 @author: Alexander Booth
+
+This doesn't work properly yet. Check out monkeyFun.py instead
 """
 
 import time
