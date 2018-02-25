@@ -3,6 +3,10 @@
 Created on Wed Dec 27 14:11:23 2017
 
 @author: Alexander
+
+This is the one that works! Yay.
+
+Can Twitter write Pride and Prejudice?
 """
 #Imports
 from tweepy.streaming import StreamListener
@@ -12,8 +16,6 @@ import os
 import json
 import re
 import urllib
-
-os.chdir("C:/Users/Alexander/Documents/baseball/bot/Monkeys")
 
 from twitCredentials import *
 
