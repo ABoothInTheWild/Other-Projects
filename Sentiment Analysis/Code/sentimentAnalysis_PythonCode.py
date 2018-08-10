@@ -102,13 +102,13 @@ def clean_tweet(tweet):
 
 #Get Training data, an assortment of positive and negative tweets   
 pos = []
-with open(r"K:/t2adb/Sentiment Analysis/Data/pos_tweets.txt", encoding="utf8") as f:
+with open(r"pos_tweets.txt", encoding="utf8") as f:
     for i in f:
         cleanedTweet = format_sentence(clean_tweet(i))
         pos.append([cleanedTweet, 'pos'])
         
 neg = []
-with open(r"K:/t2adb/Sentiment Analysis/Data/neg_tweets.txt", encoding="utf8") as f:
+with open(r"neg_tweets.txt", encoding="utf8") as f:
     for i in f:
         cleanedTweet = format_sentence(clean_tweet(i))
         neg.append([cleanedTweet, 'neg'])       
@@ -149,7 +149,7 @@ from nltk.classify.util import accuracy
 print(accuracy(classifier, test))
 
 #Time to take it for a spin on tweets about McMaster-Carr
-df = pd.read_csv("K:/t2adb/Sentiment Analysis/Data/mcmTweets.csv", encoding="latin-1")
+df = pd.read_csv("mcmTweets.csv", encoding="latin-1")
 
 sentiments = []
 for tweetText in df.Tweet_Text:
