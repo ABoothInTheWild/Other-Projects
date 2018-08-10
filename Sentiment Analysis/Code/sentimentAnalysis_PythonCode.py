@@ -117,7 +117,7 @@ with open(r"neg_tweets.txt", encoding="utf8") as f:
 
 # next, split labeled data into the training and test data
 training = pos[:int((.8)*len(pos))] + neg[:int((.8)*len(neg))]
-test = pos[int((.8)*len(pos)):] + neg[int((.8)*len(neg)):]
+test = pos[int((.2)*len(pos)):] + neg[int((.2)*len(neg)):]
 
 #Now time to create our model
 from nltk.classify import NaiveBayesClassifier
