@@ -18,10 +18,10 @@ class StdOutListener(StreamListener):
     foundScreenName = ""
     foundTweetId = ""
     foundTweetLink = ""
-    
+
     def GetLink(self):
        return "https://twitter.com/" + self.foundScreenName + "/status/" + self.foundTweetId
-    
+
     #Functions
     def on_data(self, data):
         try:
@@ -58,21 +58,22 @@ class StdOutListener(StreamListener):
         else:
             sleep(10)
             return False # To continue listening
-    
+
     def on_timeout(self):
         sleep(120)
         return True # To continue listening
 
 ####################################################################
-def findWordinStream(stream, myListener, word, counter=0):
+def findWordinStream(stream, myListener, word, stopWords, counter=0):
     rtnBool = False
     stream.filter(track=[word], languages=['en'])
-    if word.lower() in myListener.foundStatus.lower():
+    if word.lower() in myListener.foundStatus.lower() and not any(x.lower() in myListener.foundStatus.lower().strip().split() for x in stopWords):
         rtnBool = True
-    elif counter < 5:
+    elif counter < 50:
+        print(myListener.foundStatus.lower().strip().split())
         sleep(5)
-        rtnBool = findWordinStream(stream, myListener, word, counter + 1)
+        rtnBool = findWordinStream(stream, myListener, word, stopWords, counter + 1)
     else:
-        print("Exceeded maximum tries for some reason")
+        print("Exceeded maximum tries for some reason for word " + word)
         rtnBool = False
     return rtnBool

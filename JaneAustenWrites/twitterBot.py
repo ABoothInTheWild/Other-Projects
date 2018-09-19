@@ -303,27 +303,27 @@ class TwitterBot(object):
         if time1 == 1:
             # file-append
             f = open(self.logFile,'a')
-            f.write('\n' + "Sleeping for 35min...")
+            f.write('\n' + "Sleeping for 8.5min...")
             f.close()
-            sleep(2100) #Tweet every 35 minutes
+            sleep(2100/4) #Tweet every 8.5 minutes
         elif time1 == 2:
             # file-append
             f = open(self.logFile,'a')
-            f.write('\n' + "Sleeping for 65min...")
+            f.write('\n' + "Sleeping for 16min...")
             f.close()
-            sleep(3900) #Tweet every 65 minutes
+            sleep(3900/4) #Tweet every 16 minutes
         elif time1 == 3:
             # file-append
             f = open(self.logFile,'a')
-            f.write('\n' + "Sleeping for 46min...")
+            f.write('\n' + "Sleeping for 12.5min...")
             f.close()
-            sleep(2760) #Tweet every 46 minutes
+            sleep(2760/4) #Tweet every 12.5 minutes
         else:
             # file-append
             f = open(self.logFile,'a')
-            f.write('\n' + "Sleeping for 23.5min...")
+            f.write('\n' + "Sleeping for 6min...")
             f.close()
-            sleep(1410) #Tweet every 23.5 minutes
+            sleep(1410/4) #Tweet every 6 minutes
 
     @abstractmethod
     def getStatus(self):
@@ -362,7 +362,7 @@ class TwitterBot(object):
         f.write('\n' + "Trying to do an Action...")
         f.close()
         #Update probabilities here
-        potentialActions = ["follow", "favorite", "favorite", "status", "status", "status", "status", "nothing"]
+        potentialActions = ["follow", "favorite", "favorite", "status", "status", "status", "status", "status", "status", "nothing"]
         action = random.choice(potentialActions)
         statBool = True
         #For Central from UTC time zone in pythonAnywhere
