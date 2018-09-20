@@ -17,6 +17,10 @@ from twitterBot import *
 import pandas as pd
 import io
 
+import sys
+reload(sys)
+sys.setdefaultencoding('utf8')
+
 class JaneAustenWrites(TwitterBot):
 
     #inits
@@ -50,8 +54,8 @@ class JaneAustenWrites(TwitterBot):
             stopWords.append(l[0])
 
     #Update these if restarting based on log
-    currSentence = 2
-    currWord = 15
+    currSentence = 3
+    currWord = 13
 
     def getStatus(self):
         status = "I hope you have a great day!"
@@ -65,7 +69,8 @@ class JaneAustenWrites(TwitterBot):
         if findWordinStream(self.stream, self.myListener, cleanWord, self.stopWords):
             status = word + " " + self.myListener.foundTweetLink
             f = io.open(self.dataFile,'a', encoding="utf-8")
-            f.write(word + ',' + self.myListener.foundStatus.encode("utf8") + ',' + self.myListener.foundScreenName.encode("utf8") + ',' + str(self.myListener.foundTweetId) + ',' + self.myListener.foundTweetLink + '\n')
+            newLine = word.encode("utf8") + u',' + self.myListener.foundStatus.encode("utf8") + u',' + self.myListener.foundScreenName.encode("utf8") + u',' + str(self.myListener.foundTweetId).encode("utf8") + u',' + self.myListener.foundTweetLink.encode("utf8") + u'\n'
+            f.write(unicode(newLine.encode("utf8")))
             f.close()
 
         if (self.currWord == (len(sentence) - 1)):
