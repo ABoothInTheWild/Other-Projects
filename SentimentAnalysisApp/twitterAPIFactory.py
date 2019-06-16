@@ -110,11 +110,11 @@ def clean_tweet2(tweet):
     return tweet
     #don't remove emojiis, or send to lower for VADER processing
 
-def DoWork(tag):
+def DoWork(tag, limit):
     #Ignore tweets with these words in the text
     stopWords = ['RT @']
     matrix = []
-
+    limit = int(limit)
     #Load up current tweets so we don't write them twice if they are still in scope
     tweetsDB = "tweets.json"
     r = requests.get(FB_URL + tweetsDB)
@@ -128,7 +128,7 @@ def DoWork(tag):
         tags = np.unique([x.lower() for x in df['Tag']])
         keys = [(row.TweetID, row.Tag) for index, row in df.iterrows()] #clustered primary key
 
-    pages = tweepy.Cursor(api.search, q=tag, tweet_mode='extended', include_entities=True, lang='en').pages(20)
+    pages = tweepy.Cursor(api.search, q=tag, tweet_mode='extended', include_entities=True, lang='en').pages(limit)
     for page in pages:
         for tweetData in page:
             tweet = tweetData.__dict__
@@ -209,3 +209,89 @@ def GetRollingMeans(df, vader=True):
         df["rolling_mean2"] = df.Sentiment.rolling(window=50).mean()#.fillna(0)
     return df
  
+def DoWorkForUserTwitter(userName, count):
+    #Ignore tweets with these words in the text
+    stopWords = ['RT @']
+    matrix = []
+    count = int(count)
+    #Load up current tweets so we don't write them twice if they are still in scope
+    tweetsDB = "tweets.json"
+    r = requests.get(FB_URL + tweetsDB)
+    r = r.json()
+    keys = []
+    ids = []
+    if r:
+        data = [r[i] for i in r]
+        df = pd.DataFrame.from_dict(data, orient='columns')
+        ids = np.unique(df.TweetID)
+        tags = np.unique([x.lower() for x in df['Tag']])
+        keys = [(row.TweetID, row.Tag) for index, row in df.iterrows()] #clustered primary key
+
+    tweets = api.user_timeline("@" + userName, count=count, tweet_mode='extended', include_entities=True, lang='en')
+    for tweetData in tweets:
+        tweet = tweetData.__dict__
+        if not tweet["retweeted"] and not any(substring in tweet["_json"]["full_text"] for substring in stopWords):
+    #endtime=time.time()+500.0 #1minute
+    #while (time.time()<endtime):
+    #    if findWordinStream(stream, myListener, tag, stopWords):
+            #tweet = myListener.foundTweetData
+            if not (tweet["id_str"], userName) in keys:
+                #included URLS
+                url = ""
+                hashtags = ""
+                if tweet["entities"]["urls"]:
+                    if tweet["entities"]["urls"][0]["expanded_url"]:
+                        url = tweet["entities"]["urls"][0]["expanded_url"]
+                if tweet['entities']['hashtags']:
+                    hashtags = "|".join([hashtag_item['text'] for hashtag_item in tweet['entities']['hashtags']]) #concat on pipe
+                #Add columns that we want to track            
+                tweetLink = "https://twitter.com/" + tweet["user"].__dict__["screen_name"] + "/status/" + tweet["id_str"]
+                matrix.append([tweet["id_str"],
+                tweet["created_at"],
+                tweet["user"].__dict__["screen_name"],
+                tweet["user"].__dict__["name"],
+                tweet["user"].__dict__["verified"],
+                tweet["user"].__dict__["location"],
+                tweet["_json"]["full_text"],            
+                url,
+                tweet["favorite_count"],
+                tweet["retweet_count"],
+                tweetLink,
+                hashtags])
+                ids = np.append(ids, tweet["id_str"])
+            #sleep(5)
+
+    #Create dataframe
+    if matrix:
+        columnNames = ["TweetID", "CreatedAt", "User_ScreenName", "User_Name", "User_IsVerified",
+                    "User_Loc", "Tweet_Text", "Tweet_Urls", "Tweet_FavCount", "Tweet_RTCount", "Tweet_Link", "Hashtags"]
+        df = pd.DataFrame(matrix)
+        df.columns = columnNames
+    df["Tag"] = userName
+    #df["CreatedAtLocal"] = [parse(created).replace(tzinfo=timezone.utc).astimezone(tz=None) for created in df.CreatedAt]
+    df["CreatedAtLocal"] = df.CreatedAt.dt.tz_localize('utc').dt.tz_convert('US/Central')
+    df["Clean_Date"] = [datetime.strftime(created, '%D %I:%M%p') for created in df.CreatedAtLocal]
+    df['CreatedAt'] = df['CreatedAt'].dt.strftime('%Y-%m-%d %H:%M:%S')
+    df['CreatedAtLocal'] = df['CreatedAtLocal'].dt.strftime('%Y-%m-%d %H:%M:%S')
+    df["Clean_Text"] = [clean_tweet(i) for i in df.Tweet_Text]
+    df["Less_Clean_Text"] = [clean_tweet2(i) for i in df.Tweet_Text]
+    df["Sentiment"] = [TextBlob(cleanedTweet).sentiment.polarity for cleanedTweet in df.Clean_Text]
+    df["Sentiment_VADER"] = [analyser.polarity_scores(cleanedTweet)["compound"] for cleanedTweet in df.Less_Clean_Text]
+    df["Sentiment_Comb"] = (df.Sentiment + df.Sentiment_VADER) / 2
+
+    df.sort_values(by='CreatedAtLocal', inplace=True)
+    df.reset_index(inplace=True, drop=True)
+
+    #Save to database
+    # for x in range(0, len(df)):
+    #     tweet = df.iloc[x]
+    #     db_tweet = tweet.to_json()
+    #     requests.post(FB_URL + tweetsDB, db_tweet) #slow, fix this
+
+    import firebase_admin
+    from firebase_admin import db
+
+    ref = db.reference('tweets')
+    [ref.push(tweet.to_dict()) for index, tweet in df.iterrows()]
+
+    return "Done"

@@ -1,8 +1,9 @@
 function init() {
   var tag = $('#selTag').val();
+  var limitRows = $('#selLimitRows').val();
   // Use the list of sample names to populate the select options
   DestroyHideDivsShowLoad()
-  GetGraphAndDataFromDB(tag);
+  GetGraphAndDataFromDB(tag, limitRows);
 }
 
 function ShowAndLoadPlot(x) {
@@ -26,24 +27,35 @@ function DestroyHideDivsShowLoad(){
   $('#tableData').hide();
 }
 
-function GetGraphAndDataFromDB(tag){
-  d3.json("/tagplot/" + tag.toString()).then(x =>
+function GetGraphAndDataFromDB(tag, limitRows){
+  d3.json("/tagplot/" + tag.toString() + "/" + limitRows.toString()).then(x =>
     ShowAndLoadPlot(x)
   ).then( y => 
-    d3.json("/tag/" + tag.toString()).then(z =>
+    d3.json("/tag/" + tag.toString() + "/" + limitRows.toString()).then(z =>
       ShowAndLoadData(z)
     )
   );
 }
 
-function optionChanged(tag) {
+function optionChanged(tag, limit, limitRows) {
   // Fetch new data each time a new tag is selected
-  alert("Scraping Twitter for " + tag + "\nThis might take some time...");
+  alert("Scraping Twitter for " + limit + " pages of " + tag + "\nThis might take some time...");
 
   // Use the list of sample names to populate the select options
   DestroyHideDivsShowLoad()
-  d3.json("/dowork/" + tag.toString()).then(function(data){ 
-    GetGraphAndDataFromDB(tag);
+  d3.json("/dowork/" + tag.toString() + "/" + limit).then(function(data){ 
+    GetGraphAndDataFromDB(tag, limitRows);
+  });
+}
+
+function optionChangedUserName(username, count, limitRows) {
+  // Fetch new data each time a new tag is selected
+  alert("Scraping Twitter for " + count + " tweets of @" + username + "\nThis might take some time...");
+
+  // Use the list of sample names to populate the select options
+  DestroyHideDivsShowLoad()
+  d3.json("/doworkforuser/" + username.toString() + "/" + count).then(function(data){ 
+    GetGraphAndDataFromDB(username, limitRows);
   });
 }
 
@@ -51,13 +63,28 @@ $(document).ready(function() {
   // Initialize the dashboard
   init();
   $("#searchTwitter").on("click", function(){
-    optionChanged($('#selTag').val());
+    optionChanged($('#selTag').val(), $('#selLimit').val(), $('#selLimitRows').val());
   })
   $('#searchDatabase').on("click", function(){
     var tag = $('#selTag').val();
+    var limitRows = $('#selLimitRows').val();
     // Use the list of sample names to populate the select options
     DestroyHideDivsShowLoad()
-    GetGraphAndDataFromDB(tag);
+    GetGraphAndDataFromDB(tag, limitRows);
+  });
+  $("#searchTwitterForUser").on("click", function(){
+    optionChangedUserName($('#selUserName').val(), $('#selCount').val(), $('#selLimitRows2').val());
+  })
+  $('#searchDatabaseForUser').on("click", function(){
+    var tag = $('#selUserName').val();
+    var limitRows = $('#selLimitRows2').val();
+    // Use the list of sample names to populate the select options
+    DestroyHideDivsShowLoad()
+    GetGraphAndDataFromDB(tag, limitRows);
+  });
+  $('#usernameCheckbox').on("change", function(){
+    $('.userName').toggle();
+    $('.useTag').toggle();
   });
 });
 

@@ -100,23 +100,49 @@
   margin-top: 15px;
   margin-bottom: 15px;
 }
+
+a {
+  color:white;
+}
 </style>
   <div class="container containerOverride">
     <div class="row">
       <div class="col-md-12 jumbotron text-center header">
-        <h1>Twitter Sentiment Anlysis Dashboard</h1>
-        <h4 style="margin-bottom: 0px;">Created by: Alexander Booth</h4>
+        <h1>Twitter Sentiment Analysis Dashboard</h1>
+        <h4 style="margin-bottom: 5px;">Created by: Alexander Booth</h4>
+        <h5 style="margin-bottom: 0px;">Socials: 
+          <a href="https://github.com/ABoothInTheWild/Other-Projects/tree/master/SentimentAnalysisApp", target="_blank">Github,</a>
+          <a href="https://www.twitter.com/ABoothInTheWild", target="_blank">Twitter,</a>
+          <a href="https://www.linkedin.com/in/alexander-booth-41783078/", target="_blank">LinkedIn,</a>
+          <a href="https://www.sabersmartblog.com", target="_blank">Blog</a>
+        </h5>
       </div>
     </div>
     <div class="row">
       <div class="col">
         <div class="well tagEnter">
-          <h3 style=color:white;>Enter Tag</h3>
-          <div>
+          <input id="usernameCheckbox" type="checkbox" style="cursor:pointer" name="useUserName"/>
+          <label for="useUserName">Use UserName?</label>
+          <h3 class="useTag" style="color:white;">Enter Tag, Pages, and Rows to Graph</h3>
+          <h5 class="useTag" style="color:white;">Pages only used when scraping Twitter. For common tags, use a smaller number (20)</h6>
+          <h5 class="useTag" style="color:white;">For uncommon tags, use a larger number (50)</h6>
+          <div class="useTag">
               <textarea rows="1" maxlength="50" spellcheck="true" value="Trump" id="selTag" style="text-align:center;">Trump</textarea>
+              <input type="number" max="50" min="0" step="1" value="20" id="selLimit" style="text-align:center;vertical-align:top;" />
+              <input type="number" max="5000" min="0" step="10" value="100" id="selLimitRows" style="text-align:center;vertical-align:top;" />
           </div>          
-          <input type="button" class="button" value="Search Twitter" id="searchTwitter" />
-          <input type="button" class="button" value="Search Database" id="searchDatabase" />
+          <input type="button" class="button useTag" value="Search Twitter" id="searchTwitter" />
+          <input type="button" class="button useTag" value="Search Database" id="searchDatabase" />
+          <h3 class="userName" style="color:white;display:none">Enter UserName, Tweet Count, and Rows to Graph</h3>
+          <h5 class="userName" style="color:white;display:none">Tweet Count only used when scraping Twitter. For active UserNames, use a larger number (1000)</h6>
+          <h5 class="userName" style="color:white;display:none">For inactive UserNames, use a smaller number (50)</h6>
+          <div class="userName" style="display:none;">
+              <textarea rows="1" maxlength="50" spellcheck="true" value="realDonaldTrump" id="selUserName" style="text-align:center;">realDonaldTrump</textarea>
+              <input type="number" max="1000" min="0" step="1" value="1000" id="selCount" style="text-align:center;vertical-align:top;" />
+              <input type="number" max="5000" min="0" step="1" value="500" id="selLimitRows2" style="text-align:center;vertical-align:top;" />
+          </div> 
+          <input type="button" class="button userName" value="Search Twitter For User" id="searchTwitterForUser" style="display:none" />
+          <input type="button" class="button userName" value="Search Database For User" id="searchDatabaseForUser" style="display:none" />
         </div>
       </div>
     </div>

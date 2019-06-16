@@ -30,8 +30,8 @@ def index():
     return render_template("index.html")
 
 
-@app.route("/tag/<tag>")
-def tags(tag):
+@app.route("/tag/<tag>/<limit>")
+def tags(tag, limit):
     """Return a list of sample names."""
 
     #Get data from database
@@ -45,6 +45,7 @@ def tags(tag):
         df = pd.DataFrame.from_dict(data, orient='columns')
         dfSub = df[df.Tag.str.lower() == tag.lower()]
         dfSub = dfSub.drop(columns=['CreatedAt', 'CreatedAtLocal'])
+        dfSub = dfSub.tail(int(limit)) #get last limit amount of rows
 
         # Return a list of the column names (sample names)
         pd.set_option('display.max_colwidth', -1) #don't truncate columns
@@ -60,18 +61,28 @@ def tags(tag):
         data_in_html = re.sub(r'<thead', r'<thead id=%s ' % header_id, data_in_html)
     return jsonify(style_in_html + data_in_html)
 
-@app.route("/dowork/<tag>")
-def doWork(tag):
+@app.route("/dowork/<tag>/<limit>")
+def doWork(tag, limit):
     """Return a list of sample names."""
 
     #Get data from database
-    final = DoWork(tag)
+    final = DoWork(tag, limit)
 
     # Return a list of the column names (sample names)
     return jsonify(final)
 
-@app.route("/tagplot/<tag>")
-def tagplots(tag):
+@app.route("/doworkforuser/<username>/<count>")
+def DoWorkForUser(username, count):
+    """Return a list of sample names."""
+
+    #Get data from database
+    final = DoWorkForUserTwitter(username, count)
+
+    # Return a list of the column names (sample names)
+    return jsonify(final)
+
+@app.route("/tagplot/<tag>/<limit>")
+def tagplots(tag, limit):
     #Get data from database
     tweetsDB = "tweets.json"
     r = requests.get(FB_URL + tweetsDB)
@@ -82,6 +93,7 @@ def tagplots(tag):
         df = pd.DataFrame.from_dict(data, orient='columns')
         dfSub = df[df.Tag.str.lower() == tag.lower()]
         dfSub = GetRollingMeans(dfSub, vader=True)
+        dfSub = dfSub.tail(int(limit)) #get last limit amount of rows
 
         dataToPlot = dfSub
         dataToPlot = dataToPlot[["Clean_Date", "Less_Clean_Text", "Tweet_Link", "Sentiment_VADER", "rolling_mean", "rolling_mean2"]]
