@@ -17,7 +17,7 @@
 #install.packages("wordcloud")
 #install.packages("tm")
 
-setwd('C:/Users/abooth/Documents/Docs/SMU/SentimentAnalysis')
+setwd('C:\\Users\\abooth\\source\\repos\\Other-Projects\\Sentiment Analysis\\IntroToSentimentAnalysis_2019')
 
 # Load external libraries for visualizations and data manipulation
 # ensure that these have been installed prior to calls
@@ -128,7 +128,7 @@ pride_prejudice <- tidy_books %>%
 afinn <- pride_prejudice %>% 
   inner_join(get_sentiments("afinn")) %>% 
   group_by(index = linenumber %/% 80) %>% 
-  summarise(sentiment = sum(score)) %>% 
+  summarise(sentiment = sum(index)) %>% 
   mutate(method = "AFINN")
 
 # Bing and NRC
@@ -393,17 +393,17 @@ AFINN
 not_words <- bigrams_separated %>%
   filter(word1 == "not") %>%
   inner_join(AFINN, by = c(word2 = "word")) %>%
-  count(word2, score, sort = TRUE) %>%
+  count(word2, value, sort = TRUE) %>%
   ungroup()
 not_words
 
 #Plot
 not_words %>%
-  mutate(contribution = n * score) %>%
+  mutate(contribution = n * value) %>%
   arrange(desc(abs(contribution))) %>%
   head(20) %>%
   mutate(word2 = reorder(word2, contribution)) %>%
-  ggplot(aes(word2, n * score, fill = n * score > 0)) +
+  ggplot(aes(word2, n * value, fill = n * value > 0)) +
   geom_col(show.legend = FALSE) +
   xlab("Words preceded by \"not\"") +
   ylab("Sentiment score * number of occurrences") +
